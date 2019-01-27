@@ -1,0 +1,7 @@
+.idea/
+
+cassandra/*
+log/*
+
+!cassandra/.hidden
+!log/.hidden

@@ -1,0 +1,51 @@
+version: '3'
+services:
+  kong:
+    container_name: kong-dev
+    build: .
+    restart: always
+    environment:
+      - KONG_DATABASE=cassandra
+      - KONG_CASSANDRA_CONTACT_POINTS=kong-cassandra
+      - KONG_LOG_LEVEL=debug
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001
+      - KONG_ADMIN_LISTEN_SSL=0.0.0.0:8444
+      - KONG_PROXY_ACCESS_LOG=/var/log/kong/proxy_access.log
+      - KONG_ADMIN_ACCESS_LOG=/var/log/kong/admin_access.log
+      - KONG_PROXY_ERROR_LOG=/var/log/kong/proxy_error.log
+      - KONG_ADMIN_ERROR_LOG=/var/log/kong/admin_error.log
+      - KONG_PLUGINS=bundled,demo-plugin
+      - KONG_LUA_PACKAGE_PATH=/custom_plugin/?.lua;;
+    volumes:
+      - ./log:/var/log/kong/
+      - ./kong_tests.conf:/kong/spec/kong_tests.conf
+      - ./custom_plugin:/custom_plugin
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "8001:8001"
+      - "8444:8444"
+    depends_on:
+      - kong-cassandra
+  kong-migration:
+    build: .
+    restart: on-failure
+    environment:
+      - KONG_DATABASE=cassandra
+      - KONG_CASSANDRA_CONTACT_POINTS=kong-cassandra
+    command: ["kong", "migrations", "bootstrap"]
+    depends_on:
+      - kong-cassandra
+  kong-cassandra:
+    container_name: kong-cassandra
+    image: cassandra:3
+    restart: always
+    environment:
+      - CASSANDRA_RPC_ADDRESS=kong-cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "[ $$(nodetool statusgossip) = running ]"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - "./cassandra/:/var/lib/cassandra"
