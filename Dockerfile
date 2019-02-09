@@ -13,11 +13,11 @@ RUN apk add --no-cache --virtual .build-deps \
     && wget https://openresty.org/download/openresty-1.13.6.2.tar.gz \
     && wget https://github.com/Kong/openresty-patches/archive/master.tar.gz \
     && tar -xvf openresty-1.13.6.2.tar.gz \
-    && tar -xvf master.tar.gz \
+    && tar -xvf master.tar.gz
 
-    && cd openresty-1.13.6.2/bundle \
-    && for i in ../../openresty-patches-master/patches/1.13.6.2/*.patch; do patch -p1 < $i; done \
-    && cd /tmp/openresty-1.13.6.2
+#    && cd openresty-1.13.6.2/bundle \
+#    && for i in ../../openresty-patches-master/patches/1.13.6.2/*.patch; do patch -p1 < $i; done \
+#    && cd /tmp/openresty-1.13.6.2
 
 RUN cd /tmp/openresty-1.13.6.2 \
     && ./configure --with-pcre-jit \
