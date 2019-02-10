@@ -26,15 +26,15 @@ RUN cd /tmp/openresty-1.13.6.2 \
                 --with-http_stub_status_module \
                 --with-http_v2_module \
     && make -j2
-
+WORKDIR /tmp/openresty-1.13.6.2
 RUN make install \
-    && /tmp \
+    && cd /tmp \
     && rm -rf openresty-1.13.6.2.tar.gz master.tar.gz openresty-1.13.6.2 \
 
     && cd / \
     && wget https://raw.githubusercontent.com/Kong/docker-kong/c3448c49bfe775fec5182a1c6a21f7e44d1d8d4d/alpine/docker-entrypoint.sh \
     && git clone https://github.com/Kong/kong \
-    && kong/ \
+    && cd kong/ \
     && git checkout tags/1.0.2 \
     && luarocks-5.1 make \
     && sed -i -e 's/luarocks/luarocks-5.1/g' Makefile \
