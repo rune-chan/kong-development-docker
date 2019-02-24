@@ -2,7 +2,7 @@ version: '3'
 services:
   kong:
     container_name: kong-dev
-    build: .
+    image: runechang/kong-dev:latest
     restart: always
     environment:
       - KONG_DATABASE=cassandra
