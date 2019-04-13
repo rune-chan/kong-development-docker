@@ -4,7 +4,7 @@ local Errors  = require "kong.db.errors"
 
 
 for _, strategy in helpers.each_strategy() do
-    describe("Plugin: rate-limiting (API) [#" .. strategy .. "]", function()
+    describe("Plugin: demo-plugin (API) [#" .. strategy .. "]", function()
         local admin_client
         local bp
 
@@ -39,6 +39,7 @@ for _, strategy in helpers.each_strategy() do
                 assert(helpers.start_kong({
                     database   = strategy,
                     nginx_conf = "spec/fixtures/custom_nginx.template",
+                    plugins = "bundled,demo-plugin"
                 }))
 
                 admin_client = helpers.admin_client()
@@ -56,7 +57,7 @@ for _, strategy in helpers.each_strategy() do
                         ["Content-Type"] = "application/json"
                     }
                 })
-                local body = assert.res_status(200, res)
+                local body = assert.res_status(201, res)
             end)
         end)
     end)
